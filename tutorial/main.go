@@ -41,6 +41,11 @@ func main() {
 		fmt.Printf("Enter your number of tickets: ")
 		fmt.Scan(&userTickets)
 
+		// validate input
+		if firstName != "" && lastName != ""{
+			continue
+		}
+
 		// update variables
 		if userTickets <= remainingTickets {
 			remainingTickets = remainingTickets - userTickets
