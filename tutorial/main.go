@@ -42,9 +42,10 @@ func main() {
 		fmt.Scan(&userTickets)
 
 		// validate input
-		if firstName != "" && lastName != ""{
-			continue
-		}
+		isValidName := len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(email, "@")
+		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
+
 
 		// update variables
 		if userTickets <= remainingTickets {
