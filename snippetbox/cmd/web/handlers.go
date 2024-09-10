@@ -14,7 +14,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ts,err := template.ParseFiles("./ui/html/home.page.tmpl")
+	files :=  []string {
+		"./ui/html/home.page.html",
+		"./ui/html/base.layout.html",
+		"./ui/html/footer.partial.html",
+	}
+
+	ts,err := template.ParseFiles(files...)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -27,8 +33,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
-	
-	w.Write([]byte("Hello from snippetbox"))
 }
 
 func showSnippet(w http.ResponseWriter, r *http.Request) {
