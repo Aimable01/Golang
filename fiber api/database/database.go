@@ -14,7 +14,7 @@ import (
 )
 
 type Dbinstance struct {
-	DB *gorm.DB
+	Db *gorm.DB
 }
 
 var DB Dbinstance
@@ -43,6 +43,6 @@ func Connect() {
 	db.AutoMigrate(&model.User{})
 
 	DB = Dbinstance{
-		DB: db,
+		Db: db,
 	}
 }
