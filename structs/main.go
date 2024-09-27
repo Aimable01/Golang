@@ -51,4 +51,23 @@ func main() {
 	jonnyNew.name = "jonny"
 	jonnyNew.weapons = []string{"Ninja star2"}
 	fmt.Println(*jonnyNew)
+
+	// ninja intern
+	intern := ninjaIntern{"intern", 1}
+	intern.sayHello()
+	intern.sayName()
+}
+
+// use of functions
+type ninjaIntern struct {
+	name  string
+	level int
+}
+
+func (ninjaIntern) sayHello() {
+	fmt.Println("Hello")
+}
+
+func (n ninjaIntern) sayName() {
+	fmt.Println(n.name)
 }
