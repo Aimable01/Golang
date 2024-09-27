@@ -31,4 +31,24 @@ func main() {
 		ninja: wallace,
 	}
 	fmt.Println(golangDojo)
+	golangDojo.ninja.level = 3
+	fmt.Println(golangDojo.ninja.level)
+	fmt.Println(wallace.level)
+
+	// make use of pointers and addresses
+	type addressDojo struct {
+		name  string
+		ninja *ninja
+	}
+	addressed := addressDojo{"Addressed Golang dojo", &wallace}
+	fmt.Println(addressed)
+	fmt.Println(*addressed.ninja)
+
+	// use the new key word
+	jonnyNew := new(ninja)
+	fmt.Println(jonnyNew)
+	fmt.Println(*jonnyNew)
+	jonnyNew.name = "jonny"
+	jonnyNew.weapons = []string{"Ninja star2"}
+	fmt.Println(*jonnyNew)
 }
