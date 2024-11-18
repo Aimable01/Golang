@@ -41,7 +41,7 @@ input Login {
 
 type Mutation {
   createLink(input: NewLink!): Link!
-  createUser(input: NewUser!): User!
+  createUser(input: NewUser!): String!
   login(input: Login!): String!
   # to be talked about in authentication section
   refreshToken(input: RefreshTokenInput!): String!
