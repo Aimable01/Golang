@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/aimable01/hackernews/graph/model"
+	"github.com/aimable01/hackernews/internal/auth"
 	"github.com/aimable01/hackernews/internal/links"
 	"github.com/aimable01/hackernews/internal/pkg/jwt"
 	"github.com/aimable01/hackernews/internal/users"
@@ -17,11 +18,20 @@ import (
 
 // CreateLink is the resolver for the createLink field.
 func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return &model.Link{}, fmt.Errorf("access denied")
+	}
 	var link links.Link
 	link.Title = input.Title
 	link.Address = input.Address
+	link.User = user
 	linkID := link.Save()
-	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address}, nil
+	graphqlUser := &model.User{
+		ID:   user.ID,
+		Name: user.Username,
+	}
+	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address, User: graphqlUser}, nil
 }
 
 // CreateUser is the resolver for the createUser field.
@@ -73,7 +83,11 @@ func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
 	var dbLinks []links.Link
 	dbLinks = links.GetAll()
 	for _, link := range dbLinks {
-		resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title: link.Title, Address: link.Address})
+		graphqlUser := &model.User{
+			ID:   link.User.ID,
+			Name: link.User.Username,
+		}
+		resultLinks = append(resultLinks, &model.Link{ID: link.ID, Title: link.Title, Address: link.Address, User: graphqlUser})
 	}
 
 	return resultLinks, nil
