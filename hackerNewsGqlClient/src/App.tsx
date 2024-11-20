@@ -1,10 +1,11 @@
 import "./App.css";
+import ProtectedRoute from "./componets/ProtectedRoute";
 
 function App() {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <ProtectedRoute>
+      <h1>Hello this is a protected route</h1>
+    </ProtectedRoute>
   );
 }
 
