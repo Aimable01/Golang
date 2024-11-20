@@ -5,8 +5,9 @@ const httpLink = createHttpLink({
   uri: "http://localhost:8080/query",
 });
 
-const createAuthLink = (token: string | null) => {
+const createAuthLink = (getToken: () => string | null) => {
   return setContext((_, { headers }) => {
+    const token = getToken();
     return {
       headers: {
         ...headers,
@@ -16,8 +17,8 @@ const createAuthLink = (token: string | null) => {
   });
 };
 
-const createClient = (token: string | null) => {
-  const authLink = createAuthLink(token);
+const createClient = (getToken: () => string | null) => {
+  const authLink = createAuthLink(getToken);
   return new ApolloClient({
     link: authLink.concat(httpLink),
     cache: new InMemoryCache(),

@@ -1,47 +1,52 @@
-import { useMutation } from "@apollo/client";
-import { useContext, useState } from "react";
-import { LOGIN } from "../graphql/graphql";
+import React, { useContext } from "react";
+import { gql, useMutation } from "@apollo/client";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($input: Login!) {
+    login(input: $input)
+  }
+`;
 
 export default function LoginForm() {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [login] = useMutation(LOGIN);
+  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
   const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+
     try {
-      const { data } = await login({
-        variables: { input: { username, password } },
+      const response = await login({
+        variables: {
+          input: {
+            username,
+            password,
+          },
+        },
       });
-
-      const token = data.login;
-      authContext?.login(token);
-
-      console.log("Login successful: ", data);
-    } catch (error) {
-      console.error("Error logging in: ", error);
+      const token = response.data?.login;
+      if (token && authContext) {
+        authContext.login(token);
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Error logging in:", err);
     }
   };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input name="username" type="text" placeholder="Username" required />
+      <input name="password" type="password" placeholder="Password" required />
+      <button type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </button>
+      {error && <p>Error: {error.message}</p>}
+    </form>
   );
 }

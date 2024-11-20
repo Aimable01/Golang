@@ -1,9 +1,16 @@
-import React, { createContext, useState, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from "react";
 
 interface AuthContextType {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
+  getToken: () => string | null;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -15,7 +22,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [token, setToken] = useState<string | null>(null);
 
-  // load the token onmount
+  // Load token on mount
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -33,8 +40,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.removeItem("token");
   };
 
+  const getToken = useCallback(() => token, [token]);
+
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );
