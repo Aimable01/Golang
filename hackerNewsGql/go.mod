@@ -31,6 +31,7 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rs/cors v1.11.1
 	github.com/sosodev/duration v1.3.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect

@@ -11,6 +11,7 @@ import (
 	"github.com/aimable01/hackernews/internal/auth"
 	database "github.com/aimable01/hackernews/internal/pkg/db/mysql"
 	"github.com/go-chi/chi"
+	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
@@ -22,6 +23,16 @@ func main() {
 	}
 
 	router := chi.NewRouter()
+
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
+	router.Use(corsMiddleware.Handler)
 	router.Use(auth.Middleware())
 
 	// database functions
