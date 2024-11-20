@@ -1,12 +1,18 @@
-import "./App.css";
-import ProtectedRoute from "./componets/ProtectedRoute";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
 
 function App() {
-  return (
-    <ProtectedRoute>
-      <h1>Hello this is a protected route</h1>
-    </ProtectedRoute>
-  );
+  const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authContext?.isAuthenticated) {
+      navigate("/login");
+    }
+  }, [authContext?.isAuthenticated, navigate]);
+
+  return <h1>Welcome to the App!</h1>;
 }
 
 export default App;

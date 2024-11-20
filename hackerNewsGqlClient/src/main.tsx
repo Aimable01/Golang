@@ -1,12 +1,13 @@
-import { StrictMode, useContext } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ApolloProvider } from "@apollo/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
 import App from "./App.tsx";
+import { ApolloProvider } from "@apollo/client";
+import { AuthProvider } from "./context/AuthContext.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginForm from "./componets/Loginform.tsx";
 import CreateUserForm from "./componets/CreateUserForm.tsx";
-import { AuthProvider, AuthContext } from "./context/AuthContext";
-import createClient from "./graphql/graphqlClient";
+import createClient from "./graphql/graphqlClient.ts";
 
 const router = createBrowserRouter([
   { path: "/register", element: <CreateUserForm /> },
@@ -14,18 +15,12 @@ const router = createBrowserRouter([
   { path: "/", element: <App /> },
 ]);
 
-const ApolloWrapper = ({ children }: { children: React.ReactNode }) => {
-  const authContext = useContext(AuthContext);
-  const client = createClient(authContext?.getToken || (() => null));
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
-};
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <ApolloWrapper>
+      <ApolloProvider client={createClient(() => null)}>
         <RouterProvider router={router} />
-      </ApolloWrapper>
+      </ApolloProvider>
     </AuthProvider>
   </StrictMode>
 );

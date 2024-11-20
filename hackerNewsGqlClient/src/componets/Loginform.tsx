@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const LOGIN_MUTATION = gql`
   mutation Login($input: Login!) {
@@ -10,9 +10,16 @@ const LOGIN_MUTATION = gql`
 `;
 
 export default function LoginForm() {
-  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authContext?.isAuthenticated) {
+      navigate("/"); // Redirect to app if already logged in
+    }
+  }, [authContext?.isAuthenticated, navigate]);
+
+  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +39,7 @@ export default function LoginForm() {
       const token = response.data?.login;
       if (token && authContext) {
         authContext.login(token);
-        navigate("/");
+        navigate("/"); // Redirect to app after login
       }
     } catch (err) {
       console.error("Error logging in:", err);
