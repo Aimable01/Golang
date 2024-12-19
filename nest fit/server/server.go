@@ -11,12 +11,24 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/aimable01/nestfit/graph"
+	database "github.com/aimable01/nestfit/internal/pkg/db/postgres"
+	"github.com/aimable01/nestfit/internal/pkg/models"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
 const defaultPort = "8080"
 
 func main() {
+
+	// database and migrations
+	database.InitDB()
+	defer func() {
+		if err := database.CloseDB(); err != nil {
+			log.Fatalf("Error closing database connection: %v", err)
+		}
+	}()
+	database.RunMigrations(&models.User{})
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
