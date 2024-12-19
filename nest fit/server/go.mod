@@ -7,6 +7,8 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.20
 )
 
+require github.com/go-chi/chi v1.5.5 // indirect
+
 require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/agnivade/levenshtein v1.2.0 // indirect

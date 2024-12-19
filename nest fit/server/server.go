@@ -11,8 +11,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/aimable01/nestfit/graph"
+	"github.com/aimable01/nestfit/internal/auth"
 	database "github.com/aimable01/nestfit/internal/pkg/db/postgres"
 	"github.com/aimable01/nestfit/internal/pkg/models"
+	"github.com/go-chi/chi"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -34,6 +36,10 @@ func main() {
 		port = defaultPort
 	}
 
+	router := chi.NewRouter()
+
+	router.Use(auth.Middleware())
+
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
 	srv.AddTransport(transport.Options{})
@@ -47,9 +53,9 @@ func main() {
 		Cache: lru.New[string](100),
 	})
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
