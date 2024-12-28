@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/aimable01/nestfit/graph/model"
+	"github.com/aimable01/nestfit/internal/auth"
 	"github.com/aimable01/nestfit/internal/pkg/jwt"
 	"github.com/aimable01/nestfit/internal/pkg/models"
 )
@@ -47,12 +48,25 @@ func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string
 
 // RefreshToken is the resolver for the refreshToken field.
 func (r *mutationResolver) RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error) {
-	panic(fmt.Errorf("not implemented: RefreshToken - refreshToken"))
+	id, err := jwt.ParseToken(input.Token)
+	if err != nil {
+		return "", fmt.Errorf("access denied")
+	}
+	token, err := jwt.GenerateToken(id)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
 // Hello is the resolver for the hello field.
 func (r *queryResolver) Hello(ctx context.Context) (string, error) {
-	panic(fmt.Errorf("not implemented: Hello - hello"))
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return "", fmt.Errorf("unauthorised: user not logged in")
+	}
+
+	return fmt.Sprintf("Hello, %v", user.Username), nil
 }
 
 // Mutation returns MutationResolver implementation.
@@ -63,26 +77,3 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	var user models.User
-	if err := database.DB.First(&user, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	var users []*models.User
-	if err := database.DB.Find(&users).Error; err != nil {
-		return nil, err
-	}
-	return users, nil
-}
-*/

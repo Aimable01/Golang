@@ -43,19 +43,21 @@ func (user *User) Create() error {
 
 // Authenticate checks if the username and password are correct
 func (user *User) Authenticate() bool {
-	var storedUser User
-
-	// Find the user by username
-	err := database.DB.Where("email = ?", user.Email).First(&storedUser).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return false
-		}
-		panic(err)
+	var dbUser User
+	if err := database.DB.Where("email = ?", user.Email).First(&dbUser).Error; err != nil {
+		return false // Return false if the user is not found
 	}
 
-	// Compare the provided password with the stored hashed password
-	return CheckPasswordHash(user.Password, storedUser.Password)
+	// Check if the password matches
+	if !CheckPasswordHash(user.Password, dbUser.Password) {
+		return false
+	}
+
+	// Populate the current user with the fetched user details
+	user.ID = dbUser.ID
+	user.Username = dbUser.Username
+	user.Email = dbUser.Email
+	return true
 }
 
 // HashPassword hashes a plain-text password
