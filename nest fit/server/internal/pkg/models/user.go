@@ -1,6 +1,7 @@
 package models
 
 import (
+	database "github.com/aimable01/nestfit/internal/pkg/db/postgres"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -24,7 +25,7 @@ func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (user *User) Create(db *gorm.DB) error {
+func (user *User) Create() error {
 	// hash password
 	hashedPassword, err := HashPassword(user.Password)
 	if err != nil {
@@ -32,7 +33,7 @@ func (user *User) Create(db *gorm.DB) error {
 	}
 	user.Password = hashedPassword
 
-	if err := db.Create(user).Error; err != nil {
+	if err := database.DB.Create(user).Error; err != nil {
 		return err
 	}
 	return nil

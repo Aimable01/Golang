@@ -9,11 +9,23 @@ import (
 	"fmt"
 
 	"github.com/aimable01/nestfit/graph/model"
+	"github.com/aimable01/nestfit/internal/pkg/jwt"
+	"github.com/aimable01/nestfit/internal/pkg/models"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	var user models.User
+	user.Username = input.Username
+	user.Email = input.Email
+	user.Password = input.Password
+	user.Create()
+
+	token, err := jwt.GenerateToken(user.ID)
+	if err != nil {
+		return "", nil
+	}
+	return token, nil
 }
 
 // Login is the resolver for the login field.
@@ -26,10 +38,19 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 	panic(fmt.Errorf("not implemented: RefreshToken - refreshToken"))
 }
 
+// Hello is the resolver for the hello field.
+func (r *queryResolver) Hello(ctx context.Context) (string, error) {
+	panic(fmt.Errorf("not implemented: Hello - hello"))
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
 
 // !!! WARNING !!!
 // The code below was going to be deleted when updating resolvers. It has been copied here so you have
@@ -38,12 +59,18 @@ type mutationResolver struct{ *Resolver }
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
 /*
-	func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+	func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	var user models.User
+	if err := database.DB.First(&user, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	var users []*models.User
+	if err := database.DB.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-type queryResolver struct{ *Resolver }
 */
