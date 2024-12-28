@@ -30,7 +30,19 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
-	panic(fmt.Errorf("not implemented: Login - login"))
+	var user models.User
+	user.Email = input.Email
+	user.Password = input.Password
+	correct := user.Authenticate()
+	if !correct {
+		return "", &models.WrongEmailOrPasswordError{}
+	}
+
+	token, err := jwt.GenerateToken(user.ID)
+	if err != nil {
+		return "", nil
+	}
+	return token, nil
 }
 
 // RefreshToken is the resolver for the refreshToken field.
