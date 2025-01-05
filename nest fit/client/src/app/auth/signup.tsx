@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../../schemas/authSchema";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Signup() {
   const [viewPassword, setViewPassword] = useState<boolean>(false);
@@ -95,13 +96,19 @@ export default function Signup() {
           {isSubmitting ? (
             <>
               <Loader className="animate-spin" size={20} />
-              Logging in...
+              Signing up...
             </>
           ) : (
             "Sign up"
           )}
         </button>
       </form>
+      <p className="text-gray-400 text-sm">
+        Already have an account?{" "}
+        <Link to="/auth/login" className="text-blue-400 hover:underline">
+          Log in
+        </Link>
+      </p>
     </div>
   );
 }
