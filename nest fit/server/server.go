@@ -15,6 +15,7 @@ import (
 	database "github.com/aimable01/nestfit/internal/pkg/db/postgres"
 	"github.com/aimable01/nestfit/internal/pkg/models"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/cors"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -37,6 +38,16 @@ func main() {
 	}
 
 	router := chi.NewRouter()
+
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
+	router.Use(corsMiddleware.Handler)
 
 	router.Use(auth.Middleware())
 

@@ -9,6 +9,11 @@ require (
 )
 
 require (
+	github.com/go-chi/cors v1.2.1 // indirect
+	github.com/rs/cors v1.11.1 // indirect
+)
+
+require (
 	github.com/agnivade/levenshtein v1.2.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1
