@@ -5,8 +5,11 @@ import { loginSchema } from "../../schemas/authSchema";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { LOGIN_MUTATION } from "../../graphql/mutations";
 
 export default function Login() {
+  const [login] = useMutation(LOGIN_MUTATION);
   const [viewPassword, setViewPassword] = useState<boolean>(false);
   const {
     handleSubmit,
@@ -17,7 +20,12 @@ export default function Login() {
   });
 
   const submit = async (data: LoginInputs) => {
-    console.log(data);
+    try {
+      const response = login({ variables: { input: data } });
+      console.log("Login success: ", (await response).data);
+    } catch (error) {
+      console.log("Login failure: ", error);
+    }
   };
 
   return (
