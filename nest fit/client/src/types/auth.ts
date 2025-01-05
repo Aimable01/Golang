@@ -20,3 +20,7 @@ export interface AuthContextType {
 export interface AuthProviderProps {
   children: ReactNode;
 }
+
+export interface DecodedToken {
+  exp: number;
+}

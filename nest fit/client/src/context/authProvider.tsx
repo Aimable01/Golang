@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { AuthContextType, AuthProviderProps } from "../types/auth";
+import {
+  AuthContextType,
+  AuthProviderProps,
+  DecodedToken,
+} from "../types/auth";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -7,10 +12,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    window.location.href = "/auth/login";
+  };
+
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
-      setToken(savedToken);
+      const interval = setInterval(() => {
+        const decoded: DecodedToken = jwtDecode(savedToken);
+        const isExpired = decoded.exp * 1000 < Date.now();
+        if (isExpired) {
+          alert("Your session has expired, please log in again");
+          logout();
+        } else {
+          setToken(savedToken);
+        }
+      }, 60 * 1000);
+      return () => clearInterval(interval);
     }
     setIsLoading(false);
   }, []);
@@ -28,12 +49,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   if (isLoading) {
     return null;
   }
-
-  const logout = () => {
-    setToken(null);
-    localStorage.removeItem("token");
-    window.location.href = "/auth/login";
-  };
 
   return (
     <AuthContext.Provider value={{ token, setToken, logout }}>
