@@ -14,6 +14,7 @@ export interface SignupInputs {
 export interface AuthContextType {
   token: string | null;
   setToken: (token: string | null) => void;
+  logout: () => void;
 }
 
 export interface AuthProviderProps {

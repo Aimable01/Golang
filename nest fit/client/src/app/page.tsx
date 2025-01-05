@@ -8,7 +8,7 @@ const HELLO_QUERY = gql`
 `;
 
 export default function Page() {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { data, loading, error } = useQuery(HELLO_QUERY, {
     context: {
       headers: {
@@ -21,9 +21,10 @@ export default function Page() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
+    <div className="text-white">
       <h1>Welcome to the Home Page</h1>
       <p>{data?.hello}</p>
+      <button onClick={logout}>logout</button>
     </div>
   );
 }

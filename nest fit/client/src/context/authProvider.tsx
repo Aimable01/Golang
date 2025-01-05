@@ -26,11 +26,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [token, isLoading]);
 
   if (isLoading) {
-    return null; // or a loading spinner
+    return null;
   }
 
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    window.location.href = "/auth/login";
+  };
+
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ token, setToken, logout }}>
       {children}
     </AuthContext.Provider>
   );
