@@ -7,6 +7,7 @@ import Signup from "./app/auth/signup";
 import Login from "./app/auth/login";
 import { ApolloProvider } from "@apollo/client";
 import client from "./lib/apolloClient";
+import { AuthProvider } from "./context/authProvider";
 
 const router = createBrowserRouter([
   { path: "/", element: <Page /> },
@@ -17,7 +18,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ApolloProvider>
   </StrictMode>
 );

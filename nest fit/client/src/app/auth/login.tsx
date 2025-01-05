@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../schemas/authSchema";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "../../graphql/mutations";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [login] = useMutation(LOGIN_MUTATION);
   const [viewPassword, setViewPassword] = useState<boolean>(false);
   const {
@@ -19,10 +20,16 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const submit = async (data: LoginInputs) => {
+  const submit = async (loginData: LoginInputs) => {
     try {
-      const response = login({ variables: { input: data } });
-      console.log("Login success: ", (await response).data);
+      const response = await login({ variables: { input: loginData } });
+
+      if (response.data?.login) {
+        console.log("Login success: ", response.data);
+        localStorage.setItem("token", response.data.login);
+
+        navigate("/");
+      }
     } catch (error) {
       console.log("Login failure: ", error);
     }

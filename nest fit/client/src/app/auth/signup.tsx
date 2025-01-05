@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../../schemas/authSchema";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { SIGNUP_MUTATION } from "../../graphql/mutations";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState<boolean>(false);
   const [signup] = useMutation(SIGNUP_MUTATION);
   const {
@@ -22,7 +23,12 @@ export default function Signup() {
   const submit = async (data: SignupInputs) => {
     try {
       const response = await signup({ variables: { input: data } });
-      console.log("Signup success: ", response.data);
+      if (response.data?.createUser) {
+        console.log("Signup success: ", response.data);
+        localStorage.setItem("token", response.data?.createUser);
+
+        navigate("/");
+      }
     } catch (error) {
       console.log("Signup error: ", error);
     }
