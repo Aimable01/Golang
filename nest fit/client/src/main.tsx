@@ -8,6 +8,7 @@ import Login from "./app/auth/login";
 import { ApolloProvider } from "@apollo/client";
 import client from "./lib/apolloClient";
 import { AuthProvider } from "./context/authProvider";
+import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   { path: "/", element: <Page /> },
@@ -20,6 +21,7 @@ createRoot(document.getElementById("root")!).render(
     <ApolloProvider client={client}>
       <AuthProvider>
         <RouterProvider router={router} />
+        <ToastContainer position="top-right" autoClose={3000} />
       </AuthProvider>
     </ApolloProvider>
   </StrictMode>

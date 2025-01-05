@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
-      const interval = setInterval(() => {
+      try {
         const decoded: DecodedToken = jwtDecode(savedToken);
         const isExpired = decoded.exp * 1000 < Date.now();
         if (isExpired) {
@@ -30,8 +30,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else {
           setToken(savedToken);
         }
-      }, 60 * 1000);
-      return () => clearInterval(interval);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        logout();
+      }
     }
     setIsLoading(false);
   }, []);
@@ -47,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [token, isLoading]);
 
   if (isLoading) {
-    return null;
+    return <div>Loading...</div>;
   }
 
   return (

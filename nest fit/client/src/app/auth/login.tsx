@@ -7,10 +7,21 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "../../graphql/mutations";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [login] = useMutation(LOGIN_MUTATION);
+  const [login] = useMutation(LOGIN_MUTATION, {
+    onError: (error) => {
+      if (error.graphQLErrors.length > 0) {
+        toast.error(error.graphQLErrors[0].message);
+      } else if (error.networkError) {
+        toast.error("Network error, please try again later.");
+      } else {
+        toast.error("An unknown error occurred.");
+      }
+    },
+  });
   const [viewPassword, setViewPassword] = useState<boolean>(false);
   const {
     handleSubmit,
@@ -27,6 +38,7 @@ export default function Login() {
       if (response.data?.login) {
         console.log("Login success: ", response.data);
         localStorage.setItem("token", response.data.login);
+        toast.success("Login successful!");
 
         navigate("/");
       }

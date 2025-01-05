@@ -7,11 +7,22 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { SIGNUP_MUTATION } from "../../graphql/mutations";
+import { toast } from "react-toastify";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState<boolean>(false);
-  const [signup] = useMutation(SIGNUP_MUTATION);
+  const [signup] = useMutation(SIGNUP_MUTATION, {
+    onError: (error) => {
+      if (error.graphQLErrors.length > 0) {
+        toast.error(error.graphQLErrors[0].message);
+      } else if (error.networkError) {
+        toast.error("Network error, please try again later.");
+      } else {
+        toast.error("An unknown error occurred.");
+      }
+    },
+  });
   const {
     handleSubmit,
     register,
@@ -26,6 +37,7 @@ export default function Signup() {
       if (response.data?.createUser) {
         console.log("Signup success: ", response.data);
         localStorage.setItem("token", response.data?.createUser);
+        toast.success("Signup successful!");
 
         navigate("/");
       }
