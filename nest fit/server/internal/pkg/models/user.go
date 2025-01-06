@@ -9,11 +9,12 @@ import (
 
 type User struct {
 	gorm.Model
-	ID       uuid.UUID `gorm:"type:uuid;primary_key"`
-	Name     string    `json:"name"`
-	Username string    `json:"username" gorm:"unique;not null"`
-	Email    string    `json:"email" gorm:"unique;not null"`
-	Password string    `json:"password" gorm:"not null"`
+	ID             uuid.UUID `gorm:"type:uuid;primary_key"`
+	Name           string    `json:"name"`
+	Username       string    `json:"username" gorm:"unique;not null"`
+	Email          string    `json:"email" gorm:"unique;not null"`
+	Password       string    `json:"password" gorm:"not null"`
+	ProfilePicture string    `json:"profilePicture"`
 }
 
 type Users struct {
@@ -75,4 +76,14 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func (u *User) FindByID(id uuid.UUID) error {
+	// Query the database to find the user by ID
+	return database.DB.Where("id = ?", id).First(&u).Error
+}
+
+func (u *User) Update() error {
+	// Update the user record in the database
+	return database.DB.Save(&u).Error
 }

@@ -7,7 +7,11 @@ package graph
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/aimable01/nestfit/graph/model"
 	"github.com/aimable01/nestfit/internal/auth"
 	"github.com/aimable01/nestfit/internal/pkg/jwt"
@@ -66,6 +70,71 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 		return "", err
 	}
 	return token, nil
+}
+
+// UploadProfilePicture is the resolver for the uploadProfilePicture field.
+func (r *mutationResolver) UploadProfilePicture(ctx context.Context, file graphql.Upload) (string, error) {
+	// Define the allowed file types and size limit
+	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
+	maxFileSize := int64(5 * 1024 * 1024) // 5MB
+
+	// Validate file size
+	if file.Size > maxFileSize {
+		return "", fmt.Errorf("file size exceeds limit of 5MB")
+	}
+
+	// Validate file type
+	ext := filepath.Ext(file.Filename)
+	if !contains(allowedExtensions, ext) {
+		return "", fmt.Errorf("unsupported file type: %s", ext)
+	}
+
+	// Create the upload directory
+	uploadDir := "uploads/profile_pictures"
+	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+		return "", fmt.Errorf("failed to create upload directory: %w", err)
+	}
+
+	// Save the file to the server
+	filePath := filepath.Join(uploadDir, file.Filename)
+	out, err := os.Create(filePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to create file: %w", err)
+	}
+	defer out.Close()
+
+	if _, err = io.Copy(out, file.File); err != nil {
+		return "", fmt.Errorf("failed to copy file: %w", err)
+	}
+
+	// Retrieve the authenticated user from context
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return "", fmt.Errorf("unauthorized: user not logged in")
+	}
+
+	// Update user's profile picture path in the database
+	var dbUser models.User
+	if err := dbUser.FindByID(user.ID); err != nil {
+		return "", fmt.Errorf("user not found: %w", err)
+	}
+
+	dbUser.ProfilePicture = filePath
+	if err := dbUser.Update(); err != nil {
+		return "", fmt.Errorf("failed to update user profile picture: %w", err)
+	}
+
+	return "Profile picture uploaded successfully!", nil
+}
+
+// Helper function to check if a slice contains a specific string
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }
 
 // Hello is the resolver for the hello field.

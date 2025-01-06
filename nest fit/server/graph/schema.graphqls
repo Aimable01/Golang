@@ -26,8 +26,13 @@ input LoginInput {
   password: String!
 }
 
+# file upload
+scalar Upload
+
 type Mutation {
   createUser(input: NewUser!): String!
   login(input: LoginInput!): String!
   refreshToken(input: RefreshTokenInput!): String!
+
+  uploadProfilePicture(file: Upload!): String!
 }
