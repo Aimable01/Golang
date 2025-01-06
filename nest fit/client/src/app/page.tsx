@@ -1,11 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useAuth } from "../context/authProvider";
-
-const HELLO_QUERY = gql`
-  query Hello {
-    hello
-  }
-`;
+import { HELLO_QUERY } from "../graphql/queries";
 
 export default function Page() {
   const { token, logout } = useAuth();
