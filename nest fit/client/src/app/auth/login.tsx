@@ -11,24 +11,42 @@ import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [viewPassword, setViewPassword] = useState<boolean>(false);
+
+  const {
+    handleSubmit,
+    register,
+    setError,
+    formState: { isSubmitting, errors },
+  } = useForm<LoginInputs>({
+    resolver: zodResolver(loginSchema),
+  });
+
   const [login] = useMutation(LOGIN_MUTATION, {
     onError: (error) => {
       if (error.graphQLErrors.length > 0) {
-        toast.error(error.graphQLErrors[0].message);
+        // Handle specific GraphQL errors
+        const errorMessage = error.graphQLErrors[0].message;
+
+        if (errorMessage.includes("Invalid username or email")) {
+          setError("usernameOrEmail", {
+            type: "manual",
+            message: "Invalid username or email. Please try again.",
+          });
+        } else if (errorMessage.includes("Invalid password")) {
+          setError("password", {
+            type: "manual",
+            message: "Incorrect password. Please try again.",
+          });
+        } else {
+          toast.error(errorMessage);
+        }
       } else if (error.networkError) {
         toast.error("Network error, please try again later.");
       } else {
         toast.error("An unknown error occurred.");
       }
     },
-  });
-  const [viewPassword, setViewPassword] = useState<boolean>(false);
-  const {
-    handleSubmit,
-    register,
-    formState: { isSubmitting, errors },
-  } = useForm<LoginInputs>({
-    resolver: zodResolver(loginSchema),
   });
 
   const submit = async (loginData: LoginInputs) => {
@@ -37,7 +55,7 @@ export default function Login() {
 
       if (response.data?.login) {
         console.log("Login success: ", response.data);
-        localStorage.setItem("token", response.data.login);
+        localStorage.setItem("token", response.data.login.token);
         toast.success("Login successful!");
 
         navigate("/");
@@ -57,17 +75,17 @@ export default function Login() {
         className="flex flex-col gap-3 w-full sm:w-[350px] md:w-[450px] lg:w-[500px]"
         onSubmit={handleSubmit(submit)}
       >
-        {/* Email Input */}
+        {/* Username/Email Input */}
         <div className="flex flex-col gap-1">
           <input
             type="text"
-            placeholder="Email"
-            {...register("email")}
+            placeholder="Username or Email"
+            {...register("usernameOrEmail")}
             className="bg-custom-gray w-full p-3 rounded-md focus:outline-none font-light text-[14px] sm:text-[16px]"
           />
-          {errors.email && (
+          {errors.usernameOrEmail && (
             <span className="text-red-400 text-[12px] font-medium px-2">
-              {errors.email.message}
+              {errors.usernameOrEmail.message}
             </span>
           )}
         </div>

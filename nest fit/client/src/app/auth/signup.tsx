@@ -12,20 +12,11 @@ import { toast } from "react-toastify";
 export default function Signup() {
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState<boolean>(false);
-  const [signup] = useMutation(SIGNUP_MUTATION, {
-    onError: (error) => {
-      if (error.graphQLErrors.length > 0) {
-        toast.error(error.graphQLErrors[0].message);
-      } else if (error.networkError) {
-        toast.error("Network error, please try again later.");
-      } else {
-        toast.error("An unknown error occurred.");
-      }
-    },
-  });
+  const [signup] = useMutation(SIGNUP_MUTATION);
   const {
     handleSubmit,
     register,
+    setError,
     formState: { isSubmitting, errors },
   } = useForm<SignupInputs>({
     resolver: zodResolver(signupSchema),
@@ -38,11 +29,36 @@ export default function Signup() {
         console.log("Signup success: ", response.data);
         localStorage.setItem("token", response.data?.createUser);
         toast.success("Signup successful!");
-
         navigate("/");
       }
-    } catch (error) {
-      console.log("Signup error: ", error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Signup error: ", error);
+      if (error.graphQLErrors.length > 0) {
+        const message = error.graphQLErrors[0].message;
+
+        // Handle duplicate username error
+        if (message.includes(`uni_users_username`)) {
+          setError("username", {
+            type: "manual",
+            message: "Username is already taken.",
+          });
+          toast.error("Username is already taken.");
+        }
+
+        // Handle duplicate email error
+        if (message.includes(`uni_users_email`)) {
+          setError("email", {
+            type: "manual",
+            message: "Email is already in use.",
+          });
+          toast.error("Email is already in use.");
+        }
+      } else if (error.networkError) {
+        toast.error("Network error, please try again later.");
+      } else {
+        toast.error("An unknown error occurred.");
+      }
     }
   };
 
@@ -56,6 +72,21 @@ export default function Signup() {
         className="flex flex-col gap-3 w-full sm:w-[350px] md:w-[450px] lg:w-[500px]"
         onSubmit={handleSubmit(submit)}
       >
+        {/* Name Input */}
+        <div className="flex flex-col gap-1">
+          <input
+            type="text"
+            placeholder="Full Name"
+            {...register("name")}
+            className="bg-custom-gray w-full p-3 rounded-md focus:outline-none font-light text-[14px] sm:text-[16px]"
+          />
+          {errors.name && (
+            <span className="text-red-400 text-[12px] font-medium px-2">
+              {errors.name.message}
+            </span>
+          )}
+        </div>
+
         {/* Username Input */}
         <div className="flex flex-col gap-1">
           <input
