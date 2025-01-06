@@ -5,6 +5,7 @@ type Query {
 type User {
   id: ID!
   name: String!
+  username: String!
   email: String!
   password: String!
 }
@@ -14,18 +15,19 @@ input RefreshTokenInput {
 }
 
 input NewUser {
+  name: String!
   username: String!
   email: String!
   password: String!
 }
 
-input Login {
-  email: String!
+input LoginInput {
+  usernameOrEmail: String! # username or email
   password: String!
 }
 
 type Mutation {
   createUser(input: NewUser!): String!
-  login(input: Login!): String!
+  login(input: LoginInput!): String!
   refreshToken(input: RefreshTokenInput!): String!
 }

@@ -17,32 +17,41 @@ import (
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
 	var user models.User
+	user.Name = input.Name
 	user.Username = input.Username
 	user.Email = input.Email
 	user.Password = input.Password
-	user.Create()
 
+	// Create the user in the database
+	if err := user.Create(); err != nil {
+		return "", err
+	}
+
+	// Generate a JWT token for the new user
 	token, err := jwt.GenerateToken(user.ID)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
+
 	return token, nil
 }
 
 // Login is the resolver for the login field.
-func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
+func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (string, error) {
 	var user models.User
-	user.Email = input.Email
-	user.Password = input.Password
-	correct := user.Authenticate()
+
+	// Authenticate using either username or email
+	correct := user.Authenticate(input.UsernameOrEmail, input.Password)
 	if !correct {
-		return "", &models.WrongEmailOrPasswordError{}
+		return "", &models.WrongCredentialsError{}
 	}
 
+	// Generate a JWT token for the authenticated user
 	token, err := jwt.GenerateToken(user.ID)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
+
 	return token, nil
 }
 

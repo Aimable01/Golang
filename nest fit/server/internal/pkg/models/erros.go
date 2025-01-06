@@ -1,7 +1,7 @@
 package models
 
-type WrongEmailOrPasswordError struct{}
+type WrongCredentialsError struct{}
 
-func (m *WrongEmailOrPasswordError) Error() string {
-	return "wrong email or password"
+func (m *WrongCredentialsError) Error() string {
+	return "Invalid email/username or password"
 }

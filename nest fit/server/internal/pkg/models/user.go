@@ -10,6 +10,7 @@ import (
 type User struct {
 	gorm.Model
 	ID       uuid.UUID `gorm:"type:uuid;primary_key"`
+	Name     string    `json:"name"`
 	Username string    `json:"username" gorm:"unique;not null"`
 	Email    string    `json:"email" gorm:"unique;not null"`
 	Password string    `json:"password" gorm:"not null"`
@@ -41,20 +42,24 @@ func (user *User) Create() error {
 	return nil
 }
 
-// Authenticate checks if the username and password are correct
-func (user *User) Authenticate() bool {
+// Authenticate checks if the identifier (username or email) and password are correct
+func (user *User) Authenticate(usernameOrEmail string, password string) bool {
 	var dbUser User
-	if err := database.DB.Where("email = ?", user.Email).First(&dbUser).Error; err != nil {
+
+	// Determine whether the identifier is an email or username
+	query := database.DB.Where("email = ?", usernameOrEmail).Or("username = ?", usernameOrEmail).First(&dbUser)
+	if query.Error != nil {
 		return false // Return false if the user is not found
 	}
 
 	// Check if the password matches
-	if !CheckPasswordHash(user.Password, dbUser.Password) {
+	if !CheckPasswordHash(password, dbUser.Password) {
 		return false
 	}
 
 	// Populate the current user with the fetched user details
 	user.ID = dbUser.ID
+	user.Name = dbUser.Name
 	user.Username = dbUser.Username
 	user.Email = dbUser.Email
 	return true

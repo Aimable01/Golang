@@ -2,15 +2,16 @@
 
 package model
 
-type Login struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+type LoginInput struct {
+	UsernameOrEmail string `json:"usernameOrEmail"`
+	Password        string `json:"password"`
 }
 
 type Mutation struct {
 }
 
 type NewUser struct {
+	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -26,6 +27,7 @@ type RefreshTokenInput struct {
 type User struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
+	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
