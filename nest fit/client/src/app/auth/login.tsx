@@ -55,7 +55,7 @@ export default function Login() {
 
       if (response.data?.login) {
         console.log("Login success: ", response.data);
-        localStorage.setItem("token", response.data.login.token);
+        localStorage.setItem("token", response.data.login);
         toast.success("Login successful!");
 
         navigate("/");
