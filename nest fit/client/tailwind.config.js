@@ -5,6 +5,7 @@ export default {
     extend: {
       colors: {
         "custom-gray": "rgb(38, 38, 38)",
+        "normal-bg": "rgb(17, 17, 17)",
       },
     },
   },

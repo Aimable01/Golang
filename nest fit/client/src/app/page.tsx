@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useAuth } from "../context/authProvider";
 import { HELLO_QUERY } from "../graphql/queries";
+import HomeLayout from "../components/layout/HomeLayout";
 
 export default function Page() {
   const { token, logout } = useAuth();
@@ -16,10 +17,12 @@ export default function Page() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="text-white">
-      <h1>Welcome to the Home Page</h1>
-      <p>{data?.hello}</p>
-      <button onClick={logout}>logout</button>
-    </div>
+    <HomeLayout>
+      <div className="text-white">
+        <h1>Welcome to the Home Page</h1>
+        <p>{data?.hello}</p>
+        <button onClick={logout}>logout</button>
+      </div>
+    </HomeLayout>
   );
 }
