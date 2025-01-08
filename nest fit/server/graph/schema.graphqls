@@ -1,5 +1,6 @@
 type Query {
   hello: String!
+  user(username: String!): User!
 }
 
 type User {
@@ -7,7 +8,7 @@ type User {
   name: String!
   username: String!
   email: String!
-  password: String!
+  profilePicture: String!
 }
 
 input RefreshTokenInput {

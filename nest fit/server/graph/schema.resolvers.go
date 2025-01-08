@@ -75,7 +75,7 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 // UploadProfilePicture is the resolver for the uploadProfilePicture field.
 func (r *mutationResolver) UploadProfilePicture(ctx context.Context, file graphql.Upload) (string, error) {
 	// Define the allowed file types and size limit
-	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
+	// allowedExtensions := []string{".jpg", ".jpeg", ".png"}
 	maxFileSize := int64(5 * 1024 * 1024) // 5MB
 
 	// Validate file size
@@ -83,11 +83,11 @@ func (r *mutationResolver) UploadProfilePicture(ctx context.Context, file graphq
 		return "", fmt.Errorf("file size exceeds limit of 5MB")
 	}
 
-	// Validate file type
-	ext := filepath.Ext(file.Filename)
-	if !contains(allowedExtensions, ext) {
-		return "", fmt.Errorf("unsupported file type: %s", ext)
-	}
+	// // Validate file type
+	// ext := filepath.Ext(file.Filename)
+	// if !contains(allowedExtensions, ext) {
+	// 	return "", fmt.Errorf("unsupported file type: %s", ext)
+	// }
 
 	// Create the upload directory
 	uploadDir := "uploads/profile_pictures"
@@ -127,16 +127,6 @@ func (r *mutationResolver) UploadProfilePicture(ctx context.Context, file graphq
 	return "Profile picture uploaded successfully!", nil
 }
 
-// Helper function to check if a slice contains a specific string
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
-}
-
 // Hello is the resolver for the hello field.
 func (r *queryResolver) Hello(ctx context.Context) (string, error) {
 	user := auth.ForContext(ctx)
@@ -145,6 +135,30 @@ func (r *queryResolver) Hello(ctx context.Context) (string, error) {
 	}
 
 	return fmt.Sprintf("Hello, %v", user.Username), nil
+}
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context, username string) (*model.User, error) {
+	// First check if the requesting user is authenticated
+	contextUser := auth.ForContext(ctx)
+	if contextUser == nil {
+		return nil, fmt.Errorf("unauthorised: user not logged in")
+	}
+
+	// Fetch the user from the database using the username
+	var dbUser models.User
+	if err := dbUser.FindByUsername(username); err != nil {
+		return nil, fmt.Errorf("user not found: %w", err)
+	}
+
+	// Map the database user to the GraphQL model
+	return &model.User{
+		ID:             dbUser.ID.String(),
+		Name:           dbUser.Name,
+		Username:       dbUser.Username,
+		Email:          dbUser.Email,
+		ProfilePicture: dbUser.ProfilePicture,
+	}, nil
 }
 
 // Mutation returns MutationResolver implementation.

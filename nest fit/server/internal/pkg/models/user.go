@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	database "github.com/aimable01/nestfit/internal/pkg/db/postgres"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -86,4 +88,13 @@ func (u *User) FindByID(id uuid.UUID) error {
 func (u *User) Update() error {
 	// Update the user record in the database
 	return database.DB.Save(&u).Error
+}
+
+// FindByUsername fetches a user by their username from the database
+func (u *User) FindByUsername(username string) error {
+	result := database.DB.Where("username = ?", username).First(&u)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return errors.New("user not found")
+	}
+	return result.Error
 }
