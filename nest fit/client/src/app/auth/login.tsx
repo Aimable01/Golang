@@ -24,10 +24,22 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const [login] = useMutation(LOGIN_MUTATION, {
-    onError: (error) => {
+  const [login] = useMutation(LOGIN_MUTATION);
+
+  const submit = async (loginData: LoginInputs) => {
+    try {
+      const response = await login({ variables: { input: loginData } });
+
+      if (response.data?.login) {
+        localStorage.setItem("token", response.data.login);
+        await fetchCurrentUser();
+        toast.success("Login successful!");
+        navigate("/");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Login failure: ", error);
       if (error.graphQLErrors.length > 0) {
-        // Handle specific GraphQL errors
         const errorMessage = error.graphQLErrors[0].message;
 
         if (errorMessage.includes("Invalid username or email")) {
@@ -48,22 +60,6 @@ export default function Login() {
       } else {
         toast.error("An unknown error occurred.");
       }
-    },
-  });
-
-  const submit = async (loginData: LoginInputs) => {
-    try {
-      const response = await login({ variables: { input: loginData } });
-
-      if (response.data?.login) {
-        localStorage.setItem("token", response.data.login);
-        await fetchCurrentUser();
-        toast.success("Login successful!");
-
-        navigate("/");
-      }
-    } catch (error) {
-      console.log("Login failure: ", error);
     }
   };
 

@@ -8,11 +8,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { SIGNUP_MUTATION } from "../../graphql/mutations";
 import { toast } from "react-toastify";
+import { useUserStore } from "../stores/userStore";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState<boolean>(false);
   const [signup] = useMutation(SIGNUP_MUTATION);
+  const { fetchCurrentUser } = useUserStore();
+
   const {
     handleSubmit,
     register,
@@ -26,8 +29,8 @@ export default function Signup() {
     try {
       const response = await signup({ variables: { input: data } });
       if (response.data?.createUser) {
-        console.log("Signup success: ", response.data);
         localStorage.setItem("token", response.data?.createUser);
+        await fetchCurrentUser();
         toast.success("Signup successful!");
         navigate("/");
       }
