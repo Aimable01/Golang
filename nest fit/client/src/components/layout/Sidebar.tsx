@@ -25,7 +25,7 @@ export const Sidebar: React.FC = () => {
     },
     {
       icon: <User size={27} color="rgb(115, 115, 115)" />,
-      path: currentUser ? `/@${currentUser.username}` : "/auth/login",
+      path: currentUser ? `/u/${currentUser.username}` : "/auth/login",
     },
   ];
 

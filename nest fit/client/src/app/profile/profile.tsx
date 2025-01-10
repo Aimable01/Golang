@@ -15,12 +15,11 @@ export default function Profile() {
 
   useEffect(() => {
     if (username) {
-      const cleanUsername = username.replace("@", "");
-      if (currentUser && cleanUsername === currentUser.username) {
+      if (currentUser && username === currentUser.username) {
         // If viewing own profile, use current user data
         return;
       }
-      fetchProfile(cleanUsername);
+      fetchProfile(username);
     } else {
       fetchCurrentUser();
     }
@@ -28,10 +27,7 @@ export default function Profile() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  const user =
-    username?.replace("@", "") === currentUser?.username
-      ? currentUser
-      : profileUser;
+  const user = username === currentUser?.username ? currentUser : profileUser;
 
   if (!user) return <div>User not found</div>;
 
