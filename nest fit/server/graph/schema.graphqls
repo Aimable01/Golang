@@ -23,7 +23,7 @@ input NewUser {
 }
 
 input LoginInput {
-  usernameOrEmail: String! # username or email
+  usernameOrEmail: String!
   password: String!
 }
 

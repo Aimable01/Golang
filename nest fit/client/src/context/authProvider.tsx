@@ -5,12 +5,14 @@ import {
   DecodedToken,
 } from "../types/auth";
 import { jwtDecode } from "jwt-decode";
+import { useUserStore } from "../app/stores/userStore";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { fetchCurrentUser } = useUserStore();
 
   const logout = () => {
     setToken(null);
@@ -29,6 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           logout();
         } else {
           setToken(savedToken);
+          fetchCurrentUser();
         }
       } catch (error) {
         console.error("Invalid token:", error);
@@ -40,9 +43,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!isLoading) {
-      if (token && window.location.pathname === "/auth/login") {
+      const isAuthPage = window.location.pathname.startsWith("/auth/");
+      if (token && isAuthPage) {
         window.location.href = "/";
-      } else if (!token && window.location.pathname !== "/auth/login") {
+      } else if (!token && !isAuthPage && window.location.pathname !== "/") {
         window.location.href = "/auth/login";
       }
     }

@@ -25,7 +25,14 @@ func Middleware() func(http.Handler) http.Handler {
 				return
 			}
 
-			tokenStr := header
+			// Check if the header starts with "Bearer "
+			if len(header) < 7 || header[:7] != "Bearer " {
+				http.Error(w, "Invalid authorization header format", http.StatusForbidden)
+				return
+			}
+
+			// Extract the actual token
+			tokenStr := header[7:]
 			userID, err := jwt.ParseToken(tokenStr)
 			if err != nil {
 				http.Error(w, "Invalid token", http.StatusForbidden)

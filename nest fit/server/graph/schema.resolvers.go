@@ -14,7 +14,9 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/aimable01/nestfit/graph/model"
 	"github.com/aimable01/nestfit/internal/auth"
+	database "github.com/aimable01/nestfit/internal/pkg/db/postgres"
 	"github.com/aimable01/nestfit/internal/pkg/jwt"
+
 	"github.com/aimable01/nestfit/internal/pkg/models"
 )
 
@@ -145,19 +147,29 @@ func (r *queryResolver) User(ctx context.Context, username string) (*model.User,
 		return nil, fmt.Errorf("unauthorised: user not logged in")
 	}
 
-	// Fetch the user from the database using the username
-	var dbUser models.User
-	if err := dbUser.FindByUsername(username); err != nil {
+	// If username is empty, return the current authenticated user
+	if username == "" {
+		return &model.User{
+			ID:             contextUser.ID.String(),
+			Name:           contextUser.Name,
+			Username:       contextUser.Username,
+			Email:          contextUser.Email,
+			ProfilePicture: contextUser.ProfilePicture,
+		}, nil
+	}
+
+	// Otherwise, fetch the requested user profile
+	var user models.User
+	if err := database.DB.First(&user, "username = ?", username).Error; err != nil {
 		return nil, fmt.Errorf("user not found: %w", err)
 	}
 
-	// Map the database user to the GraphQL model
 	return &model.User{
-		ID:             dbUser.ID.String(),
-		Name:           dbUser.Name,
-		Username:       dbUser.Username,
-		Email:          dbUser.Email,
-		ProfilePicture: dbUser.ProfilePicture,
+		ID:             user.ID.String(),
+		Name:           user.Name,
+		Username:       user.Username,
+		Email:          user.Email,
+		ProfilePicture: user.ProfilePicture,
 	}, nil
 }
 

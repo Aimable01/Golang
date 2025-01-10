@@ -8,10 +8,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_MUTATION } from "../../graphql/mutations";
 import { toast } from "react-toastify";
+import { useUserStore } from "../stores/userStore";
 
 export default function Login() {
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState<boolean>(false);
+  const { fetchCurrentUser } = useUserStore();
 
   const {
     handleSubmit,
@@ -54,8 +56,8 @@ export default function Login() {
       const response = await login({ variables: { input: loginData } });
 
       if (response.data?.login) {
-        console.log("Login success: ", response.data);
         localStorage.setItem("token", response.data.login);
+        await fetchCurrentUser();
         toast.success("Login successful!");
 
         navigate("/");

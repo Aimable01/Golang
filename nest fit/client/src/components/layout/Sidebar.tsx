@@ -9,14 +9,24 @@ import {
   Settings,
   Menu,
 } from "lucide-react";
+import { useUserStore } from "../../app/stores/userStore";
+import { Link } from "react-router-dom";
 
 export const Sidebar: React.FC = () => {
+  const { currentUser } = useUserStore();
+
   const sidebarItems = [
-    { icon: <Home size={27} color="rgb(115, 115, 115)" /> },
-    { icon: <Search size={27} color="rgb(115, 115, 115)" /> },
-    { icon: <Plus size={27} color="rgb(115, 115, 115)" /> },
-    { icon: <Heart size={27} color="rgb(115, 115, 115)" /> },
-    { icon: <User size={27} color="rgb(115, 115, 115)" /> },
+    { icon: <Home size={27} color="rgb(115, 115, 115)" />, path: "/" },
+    { icon: <Search size={27} color="rgb(115, 115, 115)" />, path: "/search" },
+    { icon: <Plus size={27} color="rgb(115, 115, 115)" />, path: "/create" },
+    {
+      icon: <Heart size={27} color="rgb(115, 115, 115)" />,
+      path: "/favorites",
+    },
+    {
+      icon: <User size={27} color="rgb(115, 115, 115)" />,
+      path: currentUser ? `/@${currentUser.username}` : "/auth/login",
+    },
   ];
 
   return (
@@ -29,13 +39,15 @@ export const Sidebar: React.FC = () => {
               key={index}
               className="cursor-pointer hover:bg-custom-gray duration-500 rounded-lg"
             >
-              <div
-                className={`px-6 py-2 ${
-                  index === 2 ? "bg-custom-gray rounded-lg" : ""
-                }`}
-              >
-                {item.icon}
-              </div>
+              <Link to={item.path}>
+                <div
+                  className={`px-6 py-2 ${
+                    index === 2 ? "bg-custom-gray rounded-lg" : ""
+                  }`}
+                >
+                  {item.icon}
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
@@ -52,13 +64,15 @@ export const Sidebar: React.FC = () => {
               key={index}
               className="cursor-pointer hover:bg-custom-gray duration-500 rounded-lg"
             >
-              <div
-                className={`flex items-center text-[25px] px-4 py-2 ${
-                  index === 2 ? "bg-custom-gray rounded-lg" : ""
-                }`}
-              >
-                {item.icon}
-              </div>
+              <Link to={item.path}>
+                <div
+                  className={`flex items-center text-[25px] px-4 py-2 ${
+                    index === 2 ? "bg-custom-gray rounded-lg" : ""
+                  }`}
+                >
+                  {item.icon}
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
