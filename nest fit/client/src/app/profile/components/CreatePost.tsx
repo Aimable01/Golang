@@ -1,4 +1,5 @@
 import { User } from "../../../types/auth";
+import avatar from "../../../assets/placeholder.jpeg";
 
 interface CreatePostProps {
   user: User;
@@ -8,7 +9,7 @@ export const CreatePost: React.FC<CreatePostProps> = ({ user }) => {
   return (
     <div className="p-4 flex gap-4 items-start border-b border-gray-800">
       <img
-        src={user.profilePicture || "/default-avatar.png"}
+        src={user.profilePicture || avatar}
         alt={user.username}
         className="w-10 h-10 rounded-full bg-gray-700"
       />

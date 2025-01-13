@@ -1,5 +1,5 @@
 import { User } from "../../../types/auth";
-import { Camera } from "lucide-react";
+import avatar from "../../../assets/placeholder.jpeg";
 
 interface ProfileHeaderProps {
   user: User;
@@ -11,16 +11,20 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   isOwnProfile,
 }) => {
   return (
-    <div className="p-4">
+    <div className="p-4 text-white">
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-xl font-bold">{user.name}</h2>
-            <p className="text-gray-500">@{user.username}</p>
+            <p className="">@{user.username}</p>
           </div>
           <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center">
             {!user.profilePicture && (
-              <Camera size={24} className="text-gray-400" />
+              <img
+                src={avatar}
+                alt={user.username}
+                className="w-full h-full rounded-full object-cover"
+              />
             )}
             {user.profilePicture && (
               <img

@@ -4,8 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        "custom-gray": "rgb(38, 38, 38)",
+        "custom-gray": "#0A0A0A",
         "normal-bg": "rgb(17, 17, 17)",
+        "feed-bg": "#181818",
       },
     },
   },

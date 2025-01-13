@@ -10,3 +10,12 @@ body {
   background-color: rgb(17, 17, 17);
   font-family: "Poppins", sans-serif;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

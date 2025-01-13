@@ -26,19 +26,21 @@ export const FinishProfile = () => {
         <span className="text-sm text-gray-500">2 left</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {items.map((item, index) => (
-          <div
-            key={index}
-            className="p-4 bg-gray-800 rounded-lg flex flex-col items-center text-center gap-2 cursor-pointer hover:bg-gray-700"
-          >
-            <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-2 text-gray-400">
-              {item.icon}
+      <div className="overflow-x-auto pb-4 -mx-4 scrollbar-hide">
+        <div className="flex gap-4 px-4 min-w-max">
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="w-48 flex-shrink-0 p-4 bg-gray-800 rounded-lg flex flex-col items-center text-center gap-2 cursor-pointer hover:bg-gray-700"
+            >
+              <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-2 text-gray-400">
+                {item.icon}
+              </div>
+              <h4 className="font-medium">{item.title}</h4>
+              <p className="text-sm text-gray-400">{item.description}</p>
             </div>
-            <h4 className="font-medium">{item.title}</h4>
-            <p className="text-sm text-gray-400">{item.description}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
