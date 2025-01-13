@@ -1,5 +1,11 @@
 import { ReactNode } from "react";
 
+export interface User {
+  name: string;
+  username: string;
+  profilePicture: string;
+}
+
 export interface LoginInputs {
   usernameOrEmail: string;
   password: string;

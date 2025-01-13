@@ -1,7 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useUserStore } from "../stores/userStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import HomeLayout from "../../components/layout/HomeLayout";
+import { ProfileHeader } from "./components/ProfileHeader";
+import { ProfileTabs } from "./components/ProfileTabs";
+import { CreatePost } from "./components/CreatePost";
+import { FinishProfile } from "./components/FinishProfile";
+
+type TabType = "threads" | "replies" | "reposts";
 
 export default function Profile() {
   const { username } = useParams<{ username: string }>();
@@ -12,11 +18,11 @@ export default function Profile() {
     fetchProfile,
     fetchCurrentUser,
   } = useUserStore();
+  const [activeTab, setActiveTab] = useState<TabType>("threads");
 
   useEffect(() => {
     if (username) {
       if (currentUser && username === currentUser.username) {
-        // If viewing own profile, use current user data
         return;
       }
       fetchProfile(username);
@@ -28,22 +34,22 @@ export default function Profile() {
   if (isLoading) return <div>Loading...</div>;
 
   const user = username === currentUser?.username ? currentUser : profileUser;
+  const isOwnProfile = username === currentUser?.username;
 
   if (!user) return <div>User not found</div>;
 
   return (
     <HomeLayout>
-      <div className="p-4">
-        <div className="flex items-center gap-4">
-          <img
-            src={user.profilePicture || "/default-avatar.png"}
-            alt={user.username}
-            className="w-20 h-20 rounded-full"
-          />
-          <div>
-            <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-            <p className="text-gray-500">@{user.username}</p>
-          </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center p-4">
+          <h1 className="text-xl font-bold">Profile</h1>
+          <button className="text-gray-400">•••</button>
+        </div>
+        <ProfileHeader user={user} isOwnProfile={isOwnProfile} />
+        <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        <CreatePost user={user} />
+        <div className="overflow-y-auto">
+          <FinishProfile />
         </div>
       </div>
     </HomeLayout>
