@@ -2,10 +2,10 @@ import { useParams } from "react-router-dom";
 import { useUserStore } from "../stores/userStore";
 import { useEffect, useState } from "react";
 import HomeLayout from "../../components/layout/HomeLayout";
-import { ProfileHeader } from "./components/ProfileHeader";
-import { ProfileTabs } from "./components/ProfileTabs";
-import { CreatePost } from "./components/CreatePost";
-import { FinishProfile } from "./components/FinishProfile";
+import { ProfileHeader } from "../../components/profile/ProfileHeader";
+import { ProfileTabs } from "../../components/profile/ProfileTabs";
+import { CreatePost } from "../../components/profile/CreatePost";
+import { FinishProfile } from "../../components/profile/FinishProfile";
 
 type TabType = "threads" | "replies" | "reposts";
 
