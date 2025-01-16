@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Camera, Pencil, Check } from "lucide-react";
-import ProfileModal from "../modals/ProfileModal";
+import { EditProfileModal } from "../modals/EditProfileModal";
 
 export const FinishProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +36,7 @@ export const FinishProfile = () => {
             <div
               key={index}
               className="w-48 flex-shrink-0 p-4 bg-gray-800 rounded-lg flex flex-col items-center text-center gap-2 cursor-pointer hover:bg-gray-700"
-              onClick={() => setIsModalOpen(true)} // Open modal on click
+              onClick={() => setIsModalOpen(true)}
             >
               <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-2 text-gray-400">
                 {item.icon}
@@ -48,8 +48,8 @@ export const FinishProfile = () => {
         </div>
       </div>
 
-      {/* Profile Modal */}
-      <ProfileModal
+      {/* Edit Profile Modal */}
+      <EditProfileModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />

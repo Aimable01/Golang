@@ -41,7 +41,10 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
       role="dialog"
       aria-modal="true"
     >
-      <div ref={modalRef} className="bg-white rounded-lg p-6 relative">
+      <div
+        ref={modalRef}
+        className="bg-normal-bg border border-gray-500 rounded-lg p-6 relative"
+      >
         <button
           onClick={onClose}
           className="absolute top-2 right-2"

@@ -1,5 +1,7 @@
 import { User } from "../../types/auth";
 import avatar from "../../assets/placeholder.jpeg";
+import { useState } from "react";
+import { EditProfileModal } from "../modals/EditProfileModal";
 
 interface ProfileHeaderProps {
   user: User;
@@ -10,6 +12,8 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   user,
   isOwnProfile,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="p-4 text-white">
       <div className="flex flex-col gap-4">
@@ -45,9 +49,18 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
 
         {isOwnProfile && (
-          <button className="w-full py-2 px-4 bg-transparent border border-gray-700 rounded-lg text-white hover:bg-gray-800">
-            Edit profile
-          </button>
+          <>
+            <button
+              className="w-full py-2 px-4 bg-transparent border border-gray-700 rounded-lg text-white hover:bg-gray-800"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Edit profile
+            </button>
+            <EditProfileModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </>
         )}
       </div>
     </div>
