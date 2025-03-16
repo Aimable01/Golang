@@ -40,11 +40,13 @@ export default function Profile() {
 
   return (
     <HomeLayout>
-      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 w-full max-w-2xl mx-auto h-screen md:border border-none md:border-gray-400 rounded-xl bg-feed-bg text-white overflow-y-auto scrollbar-hide">
+      <div className="fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 w-full max-w-2xl mx-auto h-screen md:border border-none md:border-zinc-800 rounded-xl bg-black text-white overflow-y-auto scrollbar-hide">
         {/* Sticky Header */}
-        <div className="sticky top-0 w-full bg-normal-bg/90 backdrop-blur-md z-50 flex justify-between items-center p-4 border-b border-gray-400">
-          <h1 className="text-xl font-bold">Profile</h1>
-          <button className="text-gray-400">•••</button>
+        <div className="sticky top-0 w-full bg-black/90 backdrop-blur-md z-50 flex justify-between items-center p-4 border-b border-zinc-800">
+          <h1 className="text-[20px] font-semibold tracking-tight">Profile</h1>
+          <button className="text-zinc-500 hover:text-zinc-400 transition-colors duration-200">
+            •••
+          </button>
         </div>
 
         {/* Profile Content */}

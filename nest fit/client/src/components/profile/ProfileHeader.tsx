@@ -16,42 +16,35 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   return (
     <div className="p-4 text-white">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-xl font-bold">{user.name}</h2>
-            <p className="">@{user.username}</p>
+            <h2 className="text-[20px] font-semibold tracking-tight">
+              {user.name}
+            </h2>
+            <p className="text-[15px] text-zinc-400">@{user.username}</p>
           </div>
-          <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center">
-            {!user.profilePicture && (
-              <img
-                src={avatar}
-                alt={user.username}
-                className="w-full h-full rounded-full object-cover"
-              />
-            )}
-            {user.profilePicture && (
-              <img
-                src={user.profilePicture}
-                alt={user.username}
-                className="w-full h-full rounded-full object-cover"
-              />
-            )}
+          <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center overflow-hidden border border-zinc-700">
+            <img
+              src={user.profilePicture || avatar}
+              alt={user.username}
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <div className="flex -space-x-2">
-            <div className="w-6 h-6 bg-gray-700 rounded-full border-2 border-black"></div>
-            <div className="w-6 h-6 bg-gray-800 rounded-full border-2 border-black"></div>
+            <div className="w-7 h-7 bg-zinc-800 rounded-full border-2 border-black"></div>
+            <div className="w-7 h-7 bg-zinc-700 rounded-full border-2 border-black"></div>
           </div>
-          <span className="text-sm text-gray-400">9 followers</span>
+          <span className="text-[15px] text-zinc-400">9 followers</span>
         </div>
 
         {isOwnProfile && (
           <>
             <button
-              className="w-full py-2 px-4 bg-transparent border border-gray-700 rounded-lg text-white hover:bg-gray-800"
+              className="w-full py-4 bg-transparent border border-zinc-800 rounded-xl text-[15px] font-medium text-white hover:border-zinc-700 transition-colors duration-200"
               onClick={() => setIsModalOpen(true)}
             >
               Edit profile
