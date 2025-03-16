@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Chill",
+  "version": "1.0",
+  "description": "A Chrome extension to help you chill.",
+  "permissions": [],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["images/chill.jpeg"],
+      "matches": ["https://www.youtube.com/*"]
+    }
+  ]
+}
