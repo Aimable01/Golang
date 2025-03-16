@@ -4,9 +4,11 @@ import { useAuth } from "../context/authProvider";
 import { HELLO_QUERY } from "../graphql/queries";
 import HomeLayout from "../components/layout/HomeLayout";
 import { Modal } from "../components/modals/Modal";
+import { useUserStore } from "./stores/userStore";
 
 export default function Page() {
-  const { token, logout } = useAuth();
+  const { token } = useAuth();
+  const { currentUser } = useUserStore();
   const { data, loading, error } = useQuery(HELLO_QUERY, {
     context: {
       headers: {
@@ -37,10 +39,22 @@ export default function Page() {
           {/* Example Post Card */}
           <div className="rounded-xl border border-zinc-800 p-4 space-y-4 hover:border-zinc-700 transition-colors duration-200">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-zinc-800"></div>
+              <div className="w-10 h-10 rounded-full bg-zinc-800">
+                {currentUser?.profilePicture && (
+                  <img
+                    src={currentUser.profilePicture}
+                    alt={currentUser.name}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                )}
+              </div>
               <div>
-                <h3 className="font-medium">John Doe</h3>
-                <p className="text-[15px] text-zinc-400">@johndoe</p>
+                <h3 className="font-medium">
+                  {currentUser?.name || "Anonymous"}
+                </h3>
+                <p className="text-[15px] text-zinc-400">
+                  @{currentUser?.username || "anonymous"}
+                </p>
               </div>
             </div>
             <p className="text-[15px]">

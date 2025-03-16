@@ -6,11 +6,13 @@ import { ProfileHeader } from "../../components/profile/ProfileHeader";
 import { ProfileTabs } from "../../components/profile/ProfileTabs";
 import { CreatePost } from "../../components/profile/CreatePost";
 import { FinishProfile } from "../../components/profile/FinishProfile";
+import { useAuth } from "../../context/authProvider";
 
 type TabType = "threads" | "replies" | "reposts";
 
 export default function Profile() {
   const { username } = useParams<{ username: string }>();
+  const { logout } = useAuth();
   const {
     profileUser,
     currentUser,
@@ -44,9 +46,14 @@ export default function Profile() {
         {/* Sticky Header */}
         <div className="sticky top-0 w-full bg-black/90 backdrop-blur-md z-50 flex justify-between items-center p-4 border-b border-zinc-800">
           <h1 className="text-[20px] font-semibold tracking-tight">Profile</h1>
-          <button className="text-zinc-500 hover:text-zinc-400 transition-colors duration-200">
-            •••
-          </button>
+          {isOwnProfile && (
+            <button
+              onClick={logout}
+              className="text-zinc-500 hover:text-zinc-400 transition-colors duration-200"
+            >
+              Logout
+            </button>
+          )}
         </div>
 
         {/* Profile Content */}
