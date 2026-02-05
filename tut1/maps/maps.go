@@ -2,7 +2,13 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"strings"
+
+	"golang.org/x/tour/wc"
+)
 
 type Vertex struct {
 	Lat, Long float64
@@ -17,6 +23,22 @@ var m = map[string]Vertex{
 	},
 }
 
+// exercise
+func WordCount(s string) map[string]int {
+	// split the string into words
+	words := strings.Fields(s)
+
+	// create a map to store the word counts
+	wordCounts := make(map[string]int)
+
+	// iterate through each word
+	for _, word := range words {
+		wordCounts[word]++
+	}
+
+	return wordCounts
+}
+
 func main() {
 	fmt.Println(m)
 
@@ -27,4 +49,19 @@ func main() {
 	my_map["world"] = 2
 
 	fmt.Println(my_map)
+
+	my_map["new"] = 42
+	fmt.Println("the new value: ", my_map["new"])
+
+	my_map["new"] = 43
+	fmt.Println("the new value: ", my_map["new"])
+
+	delete(my_map, "new")
+	fmt.Println("the new value: ", my_map["new"])
+
+	v, ok := my_map["new"]
+	fmt.Println("The value: ", v, "Present? ", ok)
+
+	// solve exercise
+	wc.Test(WordCount)
 }
